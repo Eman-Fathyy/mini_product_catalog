@@ -6,89 +6,34 @@ import 'products_page.dart';
 import 'details_page.dart';
 
 /*
-PART 1: LIFECYCLE QUESTIONS
+Lifecycle Questions
 
-a) When opening a page for the first time:
-   initState()
-   didChangeDependencies()
-   build()
+1. When the page first opens:
+initState(), didChangeDependencies(), and build() run in order.
 
-b) After pressing the favorite button:
-   setState() triggers build() again.
+2. After pressing the heart button:
+setState() updates the favorites counter and build() runs again.
 
-c) When leaving a page:
-   deactivate() is called when the page leaves the widget tree.
-   dispose() is called when the page is permanently removed.
+3. When leaving the page and going back:
+deactivate() and dispose() run when a page is permanently removed.
+When returning from Details to Products, the Products page usually remains in the stack.
 
-d) When resizing the browser:
-   didChangeDependencies() runs again because MediaQuery changes.
-   build() runs again to update the responsive layout.
+4. When resizing the browser:
+didChangeDependencies() runs when the screen size dependency changes,
+and build() updates the layout using MediaQuery.sizeOf(context).
+A width below 600 uses ListView; a width of 600 or more uses GridView.
 
+go_router Questions
 
-PART 4: GO_ROUTER QUESTIONS
+1. context.go() navigates to a destination, while context.push()
+adds a page to the navigation stack.
 
-1) context.go() vs context.push():
+2. We use go for Login to Products and push for Products to Details
+because we want to return from Details and receive a result.
 
-   context.go() navigates to a new location and updates the
-   route stack. Example: Login -> Products.
-
-   context.push() pushes a new page onto the navigation stack
-   and can return a result. Example: Products -> Details.
-
-2) Why use go for Login -> Products?
-
-   Because we do not want to return to Login using the Back button.
-
-   Why use push for Products -> Details?
-
-   Because we want to return to Products and receive the result
-   from the Details page.
-
-3) Path parameters vs Query parameters:
-
-   Path parameter:
-   /details/Laptop/1200
-
-   Query parameter:
-   /products?user=Guest
-
-   Path parameters are part of the route path.
-   Query parameters are added after ? in the URL.
+3. A path parameter is part of the path, for example /details/Shoes/40.
+A query parameter follows ?, for example /products?user=Guest.
 */
-
-
-// ============================================================
-// PART 2: NAVIGATOR VERSION
-// This version is kept as comments as required by the assignment.
-// ============================================================
-
-/*
-
-void main() {
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginPage(),
-
-        '/products': (context) {
-          final username =
-              ModalRoute.of(context)!.settings.arguments as String? ?? "Guest";
-
-          return ProductsPage(username: username);
-        },
-      },
-    ),
-  );
-}
-
-*/
-
-// ============================================================
-// PART 3: GO_ROUTER VERSION
-// This is the active version.
-// ============================================================
 
 final GoRouter router = GoRouter(
   routes: [
