@@ -6,18 +6,19 @@ import 'products_data.dart';
 import 'details_page.dart';
 
 class ProductsPage extends StatefulWidget {
-  final String username;
+final String username;
 
-  const ProductsPage({
-    super.key,
-    required this.username,
-  });
+const ProductsPage({
+super.key,
+required this.username,
+});
 
-  @override
-  State<ProductsPage> createState() {
-    return ProductsPageState();
-  }
+@override
+State<ProductsPage> createState() {
+return ProductsPageState();
 }
+}
+
 class ProductsPageState extends State<ProductsPage> {
 int favorites = 0;
 
@@ -55,138 +56,148 @@ void dispose() {
 print("ProductsPage: dispose");
 super.dispose();
 }
+
 @override
 Widget build(BuildContext context) {
-  print("ProductsPage: build");
+print("ProductsPage: build");
 
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text("Products"),
-      centerTitle: true,
-    ),
+return Scaffold(
+appBar: AppBar(
+title: const Text("Products"),
+centerTitle: true,
+),
+body: Column(
+children: [
+const SizedBox(height: 10),
 
-    body: Column(
-      children: [
-        const SizedBox(height: 10),
+Text(
+"Welcome, ${widget.username}",
+style: const TextStyle(
+fontSize: 22,
+fontWeight: FontWeight.bold,
+),
+),
 
-        Text(
-          "Welcome, ${widget.username}",
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+const SizedBox(height: 10),
 
-        const SizedBox(height: 10),
+Text("Favorites: $favorites"),
 
-        Text("Favorites: $favorites"),
+const SizedBox(height: 10),
 
-        const SizedBox(height: 10),
+Text("Screen width: ${screenSize.width}"),
 
-        Text("Screen width: ${screenSize.width}"),
+if (cartMessage.isNotEmpty)
+Container(
+width: double.infinity,
+margin: const EdgeInsets.symmetric(
+horizontal: 16,
+vertical: 10,
+),
+padding: const EdgeInsets.all(16),
+decoration: BoxDecoration(
+color: Colors.green.withOpacity(0.15),
+borderRadius: BorderRadius.circular(16),
+border: Border.all(
+color: Colors.greenAccent,
+width: 1.2,
+),
+),
+child: Row(
+children: [
+const Icon(
+Icons.check_circle,
+color: Colors.greenAccent,
+size: 28,
+),
 
-        if (cartMessage.isNotEmpty)
-          Container(
-            width: double.infinity,
+const SizedBox(width: 12),
 
-            margin: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 10,
-            ),
+Expanded(
+child: Text(
+cartMessage,
+style: const TextStyle(
+color: Colors.greenAccent,
+fontSize: 16,
+fontWeight: FontWeight.bold,
+),
+),
+),
+],
+),
+),
 
-            padding: const EdgeInsets.all(16),
+Expanded(
+child: screenSize.width < 600
+? ProductsListView(
+products: products,
 
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.15),
+onFavoritePressed: () {
+setState(() {
+favorites++;
+});
+},
 
-              borderRadius: BorderRadius.circular(16),
+onProductTap: (index) async {
+// Navigator version - Part 2:
+// final result = await Navigator.push<String>(
+//   context,
+//   MaterialPageRoute(
+//     builder: (context) => ProductDetailsPage(
+//       name: products[index]['name'] as String,
+//       price: products[index]['price'] as int,
+//     ),
+//   ),
+// );
+//
+// if (result != null) {
+//   setState(() {
+//     cartMessage = result;
+//   });
+// }
 
-              border: Border.all(
-                color: Colors.greenAccent,
-                width: 1.2,
-              ),
-            ),
+final result = await context.pushNamed<String>(
+'details',
+pathParameters: {
+'name': products[index]['name'],
+'price': products[index]['price'].toString(),
+},
+);
 
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  color: Colors.greenAccent,
-                  size: 28,
-                ),
+if (result != null) {
+setState(() {
+cartMessage = result;
+});
+}
+},
+)
+    : ProductsGridView(
+products: products,
 
-                const SizedBox(width: 12),
+onFavoritePressed: () {
+setState(() {
+favorites++;
+});
+},
 
-                Expanded(
-                  child: Text(
-                    cartMessage,
+onProductTap: (index) async {
+final result = await context.pushNamed<String>(
+'details',
+pathParameters: {
+'name': products[index]['name'],
+'price': products[index]['price'].toString(),
+},
+);
 
-                    style: const TextStyle(
-                      color: Colors.greenAccent,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-        Expanded(
-          child: screenSize.width < 600
-              ? ProductsListView(
-            products: products,
-
-            onFavoritePressed: () {
-              setState(() {
-                favorites++;
-              });
-            },
-
-            onProductTap: (index) async {
-              final result = await context.pushNamed<String>(
-                'details',
-                pathParameters: {
-                  'name': products[index]['name'],
-                  'price': products[index]['price'].toString(),
-                },
-              );
-
-              if (result != null) {
-                setState(() {
-                  cartMessage = result;
-                });
-              }
-            },
-          )
-              : ProductsGridView(
-            products: products,
-
-            onFavoritePressed: () {
-              setState(() {
-                favorites++;
-              });
-            },
-
-            onProductTap: (index) async {
-              final result = await context.pushNamed<String>(
-                'details',
-                pathParameters: {
-                  'name': products[index]['name'],
-                  'price': products[index]['price'].toString(),
-                },
-              );
-
-              if (result != null) {
-                setState(() {
-                  cartMessage = result;
-                });
-              }
-            },
-          ),
-        ),
-      ],
-    ),
-  );
+if (result != null) {
+setState(() {
+cartMessage = result;
+});
+}
+},
+),
+),
+],
+),
+);
 }
 }
